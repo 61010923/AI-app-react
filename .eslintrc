@@ -1,0 +1,13 @@
+{
+    "extends": ["react-app", "airbnb", "airbnb/hooks"],
+    "rules": {
+      "react/jsx-filename-extension": 0,
+      "react/react-in-jsx-scope": 0,
+      "react/jsx-props-no-spreading": [2, {
+        "custom": "ignore"
+      }],
+      "semi": [2, "never"],
+      "no-unused-vars": "warn",
+      "max-len": "warn",   
+}
+}
