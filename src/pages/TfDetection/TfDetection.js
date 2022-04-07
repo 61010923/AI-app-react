@@ -8,6 +8,8 @@ import {
   Box, Button, Switch, FormControlLabel,
 } from '@mui/material'
 import Lottie from 'react-lottie'
+import styled from 'styled-components'
+import useSound from 'use-sound'
 import { drawRect } from './utilities'
 import animationData from '../../lotties/infinity.json'
 
@@ -16,8 +18,15 @@ function App() {
   const canvasRef = useRef(null)
   const [running, setRunning] = useState(false)
   const [loading, setLoading] = useState(true)
-  const handleUserMedia = () => setTimeout(() => setLoading(false), 1_000)
-  // Main function
+  const [playNoMask] = useSound('https://freetts.com/audio/0aa132b0-2279-4f29-b0aa-5859554b3a57.mp3')
+  const handleUserMedia = () => setTimeout(() => setLoading(false), 1000)
+
+  const ButtonBx = styled.div`
+  background-color: #333;
+  width: 640px;
+  padding: 8px 0;
+  `
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -59,7 +68,10 @@ function App() {
       const boxes = await obj[0].array()
       const classes = await obj[1].array()
       const scores = await obj[7].array()
-
+      // play sound
+      if (classes[0] === 2 && scores[0] > 0.9) {
+        playNoMask()
+      }
       // Draw mesh
       const ctx = canvasRef.current.getContext('2d')
 
@@ -91,16 +103,22 @@ function App() {
       runCoco()
       return () => clearInterval(refreshIntervalId)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running])
 
   return (
     <>
-      <Button
-        color={running ? 'error' : 'primary'}
-        onClick={() => setRunning(!running)}
-      >
-        {running ? 'stop' : 'start'}
-      </Button>
+      <ButtonBx>
+        <Button
+          color={running ? 'error' : 'primary'}
+          onClick={() => setRunning(!running)}
+        >
+          {running ? 'stop' : 'start'}
+        </Button>
+        <Button onClick={playNoMask}>
+          sound
+        </Button>
+      </ButtonBx>
 
       {/* {switchDetect ? (
         <Button variant="contained" onClick={() => runCoco('start')}>start</Button>
