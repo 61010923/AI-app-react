@@ -5,11 +5,13 @@ import Webcam from 'react-webcam'
 import { nextFrame } from '@tensorflow/tfjs'
 // 2. TODO - Import drawing utility here
 import {
-  Box, Button, Switch, FormControlLabel,
+  Box, Button, IconButton,
 } from '@mui/material'
 import Lottie from 'react-lottie'
 import styled from 'styled-components'
 import useSound from 'use-sound'
+import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded'
+import VolumeOffRoundedIcon from '@mui/icons-material/VolumeOffRounded'
 import { drawRect } from './utilities'
 import animationData from '../../lotties/infinity.json'
 
@@ -17,12 +19,14 @@ function App() {
   const webcamRef = useRef(null)
   const canvasRef = useRef(null)
   const [running, setRunning] = useState(false)
+  const [sound, setSound] = useState(false)
   const [loading, setLoading] = useState(true)
   const [playNoMask] = useSound('https://freetts.com/audio/0aa132b0-2279-4f29-b0aa-5859554b3a57.mp3')
+
   const handleUserMedia = () => setTimeout(() => setLoading(false), 1000)
 
   const ButtonBx = styled.div`
-  background-color: #333;
+  background: linear-gradient(90deg, rgba(36,0,29,1) 0%, rgba(23,25,158,1) 35%, rgba(0,255,130,1) 100%);
   width: 640px;
   padding: 8px 0;
   `
@@ -64,20 +68,16 @@ function App() {
       // const boxes = await obj[6].array()
       // const classes = await obj[7].array()
       // const scores = await obj[5].array()
-      // console.log(await obj[7].array())
       const boxes = await obj[0].array()
       const classes = await obj[1].array()
       const scores = await obj[7].array()
-      // play sound
-      if (classes[0] === 2 && scores[0] > 0.9) {
-        playNoMask()
-      }
+
       // Draw mesh
       const ctx = canvasRef.current.getContext('2d')
 
       // 5. TODO - Update drawing utility
       // drawSomething(obj, ctx)
-      requestAnimationFrame(() => { drawRect(boxes[0], classes[0], scores[0], 0.9, videoWidth, videoHeight, ctx) })
+      requestAnimationFrame(() => { drawRect(boxes[0], classes[0], scores[0], 0.9, videoWidth, videoHeight, ctx, playNoMask) })
 
       tf.dispose(img)
       tf.dispose(resized)
@@ -115,9 +115,14 @@ function App() {
         >
           {running ? 'stop' : 'start'}
         </Button>
-        <Button onClick={playNoMask}>
-          sound
-        </Button>
+        <IconButton
+          aria-label="sound"
+          color={sound ? 'error' : 'primary'}
+          onClick={() => setSound(!sound)}
+        >
+
+          {sound ? (<VolumeOffRoundedIcon />) : (<VolumeUpRoundedIcon />)}
+        </IconButton>
       </ButtonBx>
 
       {/* {switchDetect ? (

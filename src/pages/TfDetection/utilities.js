@@ -5,6 +5,8 @@
 //   3: { name: 'ThankYou', color: 'lime' },
 //   4: { name: 'LiveLong', color: 'blue' },
 // }
+import useSound from 'use-sound'
+
 const labelMap = {
   1: { name: 'Mask', color: 'green' },
   2: { name: 'NoMask', color: 'red' },
@@ -12,7 +14,7 @@ const labelMap = {
 
 // Define a drawing function
 // eslint-disable-next-line import/prefer-default-export
-export const drawRect = (boxes, classes, scores, threshold, imgWidth, imgHeight, ctx) => {
+export const drawRect = (boxes, classes, scores, threshold, imgWidth, imgHeight, ctx, playNoMask) => {
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i <= boxes.length; i++) {
     if (boxes[i] && classes[i] && scores[i] > threshold) {
@@ -20,6 +22,11 @@ export const drawRect = (boxes, classes, scores, threshold, imgWidth, imgHeight,
       const [y, x, height, width] = boxes[i]
       const text = classes[i]
 
+      // play sound
+      if (Number(classes[0]) === 2 && parseFloat(scores[0]) > 0.9) {
+        console.log('no mask')
+        playNoMask()
+      }
       // Set styling
       ctx.strokeStyle = labelMap[text].color
       ctx.lineWidth = 10
