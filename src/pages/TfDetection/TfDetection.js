@@ -14,14 +14,15 @@ import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded'
 import VolumeOffRoundedIcon from '@mui/icons-material/VolumeOffRounded'
 import { drawRect } from './utilities'
 import animationData from '../../lotties/infinity.json'
+import linkNoMask from '../../sound/speech_20220412073706398.mp3'
 
 function App() {
   const webcamRef = useRef(null)
   const canvasRef = useRef(null)
   const [running, setRunning] = useState(false)
-  const [sound, setSound] = useState(false)
+  const [sound, setSound] = useState(true)
   const [loading, setLoading] = useState(true)
-  const [playNoMask] = useSound('https://freetts.com/audio/0aa132b0-2279-4f29-b0aa-5859554b3a57.mp3')
+  const [playNoMask] = useSound(linkNoMask)
 
   const handleUserMedia = () => setTimeout(() => setLoading(false), 1000)
 
@@ -86,25 +87,70 @@ function App() {
       tf.dispose(obj)
     }
   }
+  const handleSoundAndAlert = async (net) => {
+    // Check data is available
+    if (
+      typeof webcamRef.current !== 'undefined'
+      && webcamRef.current !== null
+      && webcamRef.current.video.readyState === 4
+    ) {
+      // Get Video Properties
+      const { video } = webcamRef.current
+      // 4. TODO - Make Detections
+      const img = tf.browser.fromPixels(video)
+      const resized = tf.image.resizeBilinear(img, [640, 480])
+      const casted = resized.cast('int32')
+      const expanded = casted.expandDims(0)
+      const obj = await net.executeAsync(expanded)
+
+      // const boxes = await obj[0].array()
+      const classes = await obj[1].array()
+      const scores = await obj[7].array()
+
+      if (Number(classes[0][0]) === 2 && parseFloat(scores[0][0]) > 0.9) {
+        console.log('no mask')
+        playNoMask()
+        // lineNotify()
+      }
+      tf.dispose(img)
+      tf.dispose(resized)
+      tf.dispose(casted)
+      tf.dispose(expanded)
+      tf.dispose(obj)
+    }
+  }
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (running) {
-      let refreshIntervalId
+      let loopDetection
+      let loopSoundAndAlert
       const runCoco = async () => {
         console.log('runcoco')
         // 3. TODO - Load network
         // const net = await tf.loadGraphModel('https://modeltf.s3.us-west-2.amazonaws.com/model.json')
         const net = await tf.loadGraphModel('https://maskmodel.s3.us-west-2.amazonaws.com/model.json')
         // Loop and detect hands
-        refreshIntervalId = setInterval(() => {
+        if (sound) {
+          loopSoundAndAlert = setInterval(() => {
+            handleSoundAndAlert(net)
+            console.log('sound')
+          }, 2000)
+        }
+        loopDetection = setInterval(() => {
           detect(net)
+          console.log('detect')
         }, 16.7)
       }
       runCoco()
-      return () => clearInterval(refreshIntervalId)
+      return () => {
+        if (sound) {
+          clearInterval(loopSoundAndAlert)
+        }
+        clearInterval(loopDetection)
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [running])
+  }, [running, sound])
 
   return (
     <>
@@ -117,11 +163,11 @@ function App() {
         </Button>
         <IconButton
           aria-label="sound"
-          color={sound ? 'error' : 'primary'}
+          color={sound ? 'primary' : 'error'}
           onClick={() => setSound(!sound)}
         >
 
-          {sound ? (<VolumeOffRoundedIcon />) : (<VolumeUpRoundedIcon />)}
+          {sound ? (<VolumeUpRoundedIcon />) : (<VolumeOffRoundedIcon />)}
         </IconButton>
       </ButtonBx>
 

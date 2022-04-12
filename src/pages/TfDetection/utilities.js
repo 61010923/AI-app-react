@@ -5,7 +5,6 @@
 //   3: { name: 'ThankYou', color: 'lime' },
 //   4: { name: 'LiveLong', color: 'blue' },
 // }
-import useSound from 'use-sound'
 
 const labelMap = {
   1: { name: 'Mask', color: 'green' },
@@ -23,10 +22,10 @@ export const drawRect = (boxes, classes, scores, threshold, imgWidth, imgHeight,
       const text = classes[i]
 
       // play sound
-      if (Number(classes[0]) === 2 && parseFloat(scores[0]) > 0.9) {
-        console.log('no mask')
-        playNoMask()
-      }
+      // if (Number(classes[0]) === 2 && parseFloat(scores[0]) > 0.9) {
+      //   console.log('no mask')
+      //   playNoMask()
+      // }
       // Set styling
       ctx.strokeStyle = labelMap[text].color
       ctx.lineWidth = 10
