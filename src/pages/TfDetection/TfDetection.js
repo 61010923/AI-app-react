@@ -12,9 +12,12 @@ import styled from 'styled-components'
 import useSound from 'use-sound'
 import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded'
 import VolumeOffRoundedIcon from '@mui/icons-material/VolumeOffRounded'
-import { drawRect } from './utilities'
+import axios from 'axios'
+import { drawRect } from '../../components/utilities'
 import animationData from '../../lotties/infinity.json'
 import linkNoMask from '../../sound/speech_20220412073706398.mp3'
+import Table from '../../components/Table'
+import AppBar from '../../components/AppBar'
 
 function App() {
   const webcamRef = useRef(null)
@@ -27,9 +30,19 @@ function App() {
   const handleUserMedia = () => setTimeout(() => setLoading(false), 1000)
 
   const ButtonBx = styled.div`
-  background: linear-gradient(90deg, rgba(36,0,29,1) 0%, rgba(23,25,158,1) 35%, rgba(0,255,130,1) 100%);
-  width: 640px;
-  padding: 8px 0;
+  background: #333;
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:10;
+  `
+  const CanvasBx = styled.div`
+  height:100vh;
+  display:flex;
   `
 
   const defaultOptions = {
@@ -39,6 +52,46 @@ function App() {
     rendererSettings: {
       preserveAspectRatio: 'xMidYMid slice',
     },
+  }
+  const saveImage = async () => {
+    // get secure url from our server
+    const { url } = await fetch(`${process.env.REACT_APP_BASE_URL}/s3Url`).then((res) => res.json())
+    const strToReplace = webcamRef.current.getScreenshot()
+    const imageSrc = strToReplace.replace(/^data:image\/[a-z]+;base64,/, '')
+    const u = strToReplace.split(',')[1]
+    const binary = atob(u)
+    const array = []
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < binary.length; i++) {
+      array.push(binary.charCodeAt(i))
+    }
+    const typedArray = new Uint8Array(array)
+    await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'image/jpeg',
+      },
+      body: typedArray,
+    })
+
+    const imageUrl = url.split('?')[0]
+    console.log(imageUrl)
+    return imageUrl
+  }
+  const lineNotify = async (message, image) => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/notify`, { message, image }, {
+      // const response = await axios.post('http://localhost:5000/notify', { message, image }, {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      })
+      if (response.status === 201 || response.status === 200) {
+        console.log(response.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   const detect = async (net) => {
     // Check data is available
@@ -106,10 +159,14 @@ function App() {
       // const boxes = await obj[0].array()
       const classes = await obj[1].array()
       const scores = await obj[7].array()
-
       if (Number(classes[0][0]) === 2 && parseFloat(scores[0][0]) > 0.9) {
-        console.log('no mask')
-        playNoMask()
+        // const imageSrc = webcamRef.current.getScreenshot()
+        const imageUrl = await saveImage()
+        lineNotify('No mask', imageUrl)
+        // console.log(imageSrc)
+        if (sound) {
+          playNoMask()
+        }
         // lineNotify()
       }
       tf.dispose(img)
@@ -130,22 +187,20 @@ function App() {
         // const net = await tf.loadGraphModel('https://modeltf.s3.us-west-2.amazonaws.com/model.json')
         const net = await tf.loadGraphModel('https://maskmodel.s3.us-west-2.amazonaws.com/model.json')
         // Loop and detect hands
-        if (sound) {
-          loopSoundAndAlert = setInterval(() => {
-            handleSoundAndAlert(net)
-            console.log('sound')
-          }, 2000)
-        }
+        // if (sound) {
+        loopSoundAndAlert = setInterval(() => {
+          handleSoundAndAlert(net)
+          console.log('sound')
+        }, 2000)
+        // }
         loopDetection = setInterval(() => {
           detect(net)
-          console.log('detect')
+          // console.log('detect')
         }, 16.7)
       }
       runCoco()
       return () => {
-        if (sound) {
-          clearInterval(loopSoundAndAlert)
-        }
+        clearInterval(loopSoundAndAlert)
         clearInterval(loopDetection)
       }
     }
@@ -154,6 +209,7 @@ function App() {
 
   return (
     <>
+      {/* <AppBar /> */}
       <ButtonBx>
         <Button
           color={running ? 'error' : 'primary'}
@@ -169,18 +225,17 @@ function App() {
 
           {sound ? (<VolumeUpRoundedIcon />) : (<VolumeOffRoundedIcon />)}
         </IconButton>
+
       </ButtonBx>
-
-      {/* {switchDetect ? (
-        <Button variant="contained" onClick={() => runCoco('start')}>start</Button>
-
-      )
-        : (
-          <Button variant="contained" onClick={() => runCoco('stop')}>stop</Button>
-
-        )} */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'relative' }}>
+      <CanvasBx>
+        <Box sx={{
+          position: 'relative',
+          width: '50vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        >
           {loading
             && (
               <Box
@@ -206,12 +261,12 @@ function App() {
             muted
             style={{
               position: 'absolute',
-              left: 0,
-              right: 0,
+              left: 45,
               zIndex: 9,
               width: 640,
               height: 480,
             }}
+            screenshotFormat="image/jpeg"
             onUserMedia={handleUserMedia}
           />
 
@@ -219,8 +274,7 @@ function App() {
             ref={canvasRef}
             style={{
               position: 'absolute',
-              left: 0,
-              right: 0,
+              left: 45,
               zIndex: 10,
               width: 640,
               height: 480,
@@ -229,7 +283,19 @@ function App() {
             }}
           />
         </Box>
-      </Box>
+        <Box sx={{
+          position: 'relative',
+          width: '50vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.1)',
+          padding: '1rem',
+        }}
+        >
+          <Table />
+        </Box>
+      </CanvasBx>
 
     </>
   )
