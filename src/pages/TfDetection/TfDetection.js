@@ -18,6 +18,7 @@ import animationData from '../../lotties/infinity.json'
 import linkNoMask from '../../sound/speech_20220412073706398.mp3'
 import Table from '../../components/Table'
 import AppBar from '../../components/AppBar'
+import LineBar from '../../components/LineBar'
 
 function App() {
   const webcamRef = useRef(null)
@@ -39,6 +40,7 @@ function App() {
   top:0;
   left:0;
   z-index:10;
+  box-shadow: 0 0 10px 2px;
   `
   const CanvasBx = styled.div`
   height:100vh;
@@ -289,10 +291,13 @@ function App() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          flexDirection: 'column',
+          gap: 1,
           backgroundColor: 'rgba(0,0,0,0.1)',
           padding: '1rem',
         }}
         >
+          <LineBar />
           <Table />
         </Box>
       </CanvasBx>
