@@ -18,6 +18,7 @@ import animationData from '../../lotties/infinity.json'
 import linkNoMask from '../../sound/speech_20220412073706398.mp3'
 import Table from '../../components/Table'
 import AppBar from '../../components/AppBar'
+import { getAllData, setData } from '../../firebaseFunc'
 
 function App() {
   const webcamRef = useRef(null)
@@ -26,6 +27,7 @@ function App() {
   const [sound, setSound] = useState(true)
   const [loading, setLoading] = useState(true)
   const [playNoMask] = useSound(linkNoMask)
+  const [rows, setRows] = useState([])
 
   const handleUserMedia = () => setTimeout(() => setLoading(false), 1000)
 
@@ -119,6 +121,7 @@ function App() {
       const casted = resized.cast('int32')
       const expanded = casted.expandDims(0)
       const obj = await net.executeAsync(expanded)
+      console.log(obj)
       // const boxes = await obj[6].array()
       // const classes = await obj[7].array()
       // const scores = await obj[5].array()
@@ -162,6 +165,11 @@ function App() {
       if (Number(classes[0][0]) === 2 && parseFloat(scores[0][0]) > 0.9) {
         // const imageSrc = webcamRef.current.getScreenshot()
         const imageUrl = await saveImage()
+        const body = {
+          image: imageUrl,
+          date: new Date(),
+        }
+        await setData(body)
         lineNotify('No mask', imageUrl)
         // console.log(imageSrc)
         if (sound) {
@@ -186,6 +194,7 @@ function App() {
         // 3. TODO - Load network
         // const net = await tf.loadGraphModel('https://modeltf.s3.us-west-2.amazonaws.com/model.json')
         const net = await tf.loadGraphModel('https://maskmodel.s3.us-west-2.amazonaws.com/model.json')
+        console.log(net)
         // Loop and detect hands
         // if (sound) {
         loopSoundAndAlert = setInterval(() => {
@@ -206,6 +215,14 @@ function App() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, sound])
+
+  const getData = async () => {
+    const data = await getAllData()
+    setRows(data)
+  }
+  useEffect(() => {
+    getData()
+  }, [])
 
   return (
     <>
@@ -293,7 +310,7 @@ function App() {
           padding: '1rem',
         }}
         >
-          <Table />
+          <Table rows={rows} />
         </Box>
       </CanvasBx>
 

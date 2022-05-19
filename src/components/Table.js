@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import _isEmpty from 'lodash/isEmpty'
 import Box from '@mui/material/Box'
+import PropTypes from 'prop-types'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
@@ -23,7 +24,7 @@ const style = {
 const columns = [
   { id: 'image', label: 'Image Detection', minWidth: 50 },
   { id: 'created', label: 'Created', minWidth: 100 },
-  { id: 'status', label: 'Status', minWidth: 100 },
+  // { id: 'status', label: 'Status', minWidth: 100 },
 ]
 
 function createData(image, date, status) {
@@ -32,12 +33,13 @@ function createData(image, date, status) {
   }
 }
 
-const rows = [
-  createData('https://image-mask-detection.s3.us-west-2.amazonaws.com/8d5dbbd910baf04816f091434cf0dfe0', '2021/04/27 13.00', 'no mask'),
-  createData('https://image-mask-detection.s3.us-west-2.amazonaws.com/5ef8bee7092706165006da108eb8d0ca', '2021/04/27 13.00', 'no mask'),
-]
+// const rows = [
+//   createData('https://image-mask-detection.s3.us-west-2.amazonaws.com/8d5dbbd910baf04816f091434cf0dfe0', '2021/04/27 13.00', 'no mask'),
+//   createData('https://image-mask-detection.s3.us-west-2.amazonaws.com/5ef8bee7092706165006da108eb8d0ca', '2021/04/27 13.00', 'no mask'),
+// ]
 
-export default function StickyHeadTable() {
+export default function StickyHeadTable(props) {
+  const { rows } = props
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const handleChangePage = (event, newPage) => {
@@ -49,6 +51,7 @@ export default function StickyHeadTable() {
     setPage(0)
   }
 
+  console.log(rows)
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -82,7 +85,7 @@ export default function StickyHeadTable() {
 
                   </TableCell>
                   <TableCell align="left">
-                    {item.date}
+                    {item.created}
                   </TableCell>
                   <TableCell align="">
                     <Box sx={{
@@ -124,4 +127,9 @@ export default function StickyHeadTable() {
       />
     </Paper>
   )
+}
+
+StickyHeadTable.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  rows: PropTypes.arrayOf(PropTypes.any).isRequired,
 }
