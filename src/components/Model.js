@@ -7,6 +7,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import PropTypes from 'prop-types'
 import Avatar from '@mui/material/Avatar'
+import SearchIcon from '@mui/icons-material/Search'
 
 function Model({ item }) {
   const [open, setOpen] = React.useState(false)
@@ -14,12 +15,26 @@ function Model({ item }) {
   const handleClose = () => setOpen(false)
   return (
     <>
-      <Avatar
-        alt="image detection"
-        src={item.image}
-        sx={{ width: 56, height: 56, cursor: 'pointer' }}
+      <Box
+        sx={{
+          position: 'relative', width: '56px', height: '56px',
+        }}
         onClick={handleOpen}
-      />
+      >
+        <Avatar
+          alt="image detection"
+          src={item.image}
+          sx={{
+            width: 56, height: 56, cursor: 'pointer',
+          }}
+
+        />
+        <Box sx={{ position: 'absolute', bottom: '-7px', right: '-7px' }}>
+          <IconButton aria-label="search" size="" sx={{ color: '#016DFF' }}>
+            <SearchIcon fontSize="inherit" />
+          </IconButton>
+        </Box>
+      </Box>
       <Modal
         open={open}
         onClose={handleClose}

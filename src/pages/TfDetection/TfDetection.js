@@ -19,6 +19,7 @@ import linkNoMask from '../../sound/speech_20220412073706398.mp3'
 import Table from '../../components/Table'
 import AppBar from '../../components/AppBar'
 import { getAllData, setData } from '../../firebaseFunc'
+import LineBar from '../../components/LineBar'
 
 function App() {
   const webcamRef = useRef(null)
@@ -41,6 +42,7 @@ function App() {
   top:0;
   left:0;
   z-index:10;
+  box-shadow: 0 0 10px 2px;
   `
   const CanvasBx = styled.div`
   height:100vh;
@@ -125,10 +127,10 @@ function App() {
       // const boxes = await obj[6].array()
       // const classes = await obj[7].array()
       // const scores = await obj[5].array()
-      const boxes = await obj[0].array()
-      const classes = await obj[1].array()
-      const scores = await obj[7].array()
-
+      const boxes = await obj[5].array()
+      const classes = await obj[2].array()
+      const scores = await obj[3].array()
+      // console.log(await obj[5].array())
       // Draw mesh
       const ctx = canvasRef.current.getContext('2d')
 
@@ -159,11 +161,10 @@ function App() {
       const expanded = casted.expandDims(0)
       const obj = await net.executeAsync(expanded)
 
-      // const boxes = await obj[0].array()
-      const classes = await obj[1].array()
-      const scores = await obj[7].array()
+      // const boxes = await obj[5].array()
+      const classes = await obj[2].array()
+      const scores = await obj[3].array()
       if (Number(classes[0][0]) === 2 && parseFloat(scores[0][0]) > 0.9) {
-        // const imageSrc = webcamRef.current.getScreenshot()
         const imageUrl = await saveImage()
         const body = {
           image: imageUrl,
@@ -171,7 +172,6 @@ function App() {
         }
         await setData(body)
         lineNotify('No mask', imageUrl)
-        // console.log(imageSrc)
         if (sound) {
           playNoMask()
         }
@@ -193,8 +193,8 @@ function App() {
         console.log('runcoco')
         // 3. TODO - Load network
         // const net = await tf.loadGraphModel('https://modeltf.s3.us-west-2.amazonaws.com/model.json')
-        const net = await tf.loadGraphModel('https://maskmodel.s3.us-west-2.amazonaws.com/model.json')
-        console.log(net)
+        // const net = await tf.loadGraphModel('https://maskmodel.s3.us-west-2.amazonaws.com/model.json')
+        const net = await tf.loadGraphModel('https://maskmodelv2.s3.us-west-2.amazonaws.com/model.json')
         // Loop and detect hands
         // if (sound) {
         loopSoundAndAlert = setInterval(() => {
@@ -306,10 +306,13 @@ function App() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          flexDirection: 'column',
+          gap: 1,
           backgroundColor: 'rgba(0,0,0,0.1)',
           padding: '1rem',
         }}
         >
+          <LineBar />
           <Table rows={rows} />
         </Box>
       </CanvasBx>
