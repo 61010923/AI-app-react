@@ -124,10 +124,10 @@ function App() {
       // const boxes = await obj[6].array()
       // const classes = await obj[7].array()
       // const scores = await obj[5].array()
-      const boxes = await obj[0].array()
-      const classes = await obj[1].array()
-      const scores = await obj[7].array()
-
+      const boxes = await obj[5].array()
+      const classes = await obj[2].array()
+      const scores = await obj[3].array()
+      // console.log(await obj[5].array())
       // Draw mesh
       const ctx = canvasRef.current.getContext('2d')
 
@@ -158,14 +158,12 @@ function App() {
       const expanded = casted.expandDims(0)
       const obj = await net.executeAsync(expanded)
 
-      // const boxes = await obj[0].array()
-      const classes = await obj[1].array()
-      const scores = await obj[7].array()
+      // const boxes = await obj[5].array()
+      const classes = await obj[2].array()
+      const scores = await obj[3].array()
       if (Number(classes[0][0]) === 2 && parseFloat(scores[0][0]) > 0.9) {
-        // const imageSrc = webcamRef.current.getScreenshot()
         const imageUrl = await saveImage()
         lineNotify('No mask', imageUrl)
-        // console.log(imageSrc)
         if (sound) {
           playNoMask()
         }
@@ -187,7 +185,8 @@ function App() {
         console.log('runcoco')
         // 3. TODO - Load network
         // const net = await tf.loadGraphModel('https://modeltf.s3.us-west-2.amazonaws.com/model.json')
-        const net = await tf.loadGraphModel('https://maskmodel.s3.us-west-2.amazonaws.com/model.json')
+        // const net = await tf.loadGraphModel('https://maskmodel.s3.us-west-2.amazonaws.com/model.json')
+        const net = await tf.loadGraphModel('https://maskmodelv2.s3.us-west-2.amazonaws.com/model.json')
         // Loop and detect hands
         // if (sound) {
         loopSoundAndAlert = setInterval(() => {
