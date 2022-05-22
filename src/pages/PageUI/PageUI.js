@@ -52,12 +52,13 @@ const useStyles = makeStyles((theme) => ({
     transform: 'translate(-50%,-50%)',
   },
   headerBox: {
-    width: '20%',
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       justifyContent: 'center',
+      alignItems: 'center',
     },
   },
   flexControl: {
@@ -66,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
     },
   },
 }))
@@ -278,12 +280,14 @@ function PageUI() {
           >
             <Grid item md={1}>
               <Box width="100%" className={style.flexControl} height="100%">
-                <Box className={style.headerBox}>
-                  <Box width="100px">
-                    <img src={Logo} alt="logo" width="100%" />
-                  </Box>
-                  <Box width="100%" minWidth={100}>
-                    <Typography variant="h6">Mask app</Typography>
+                <Box>
+                  <Box className={style.headerBox}>
+                    <Box width="100px">
+                      <img src={Logo} alt="logo" width="100%" />
+                    </Box>
+                    <Box width="100%" minWidth={100}>
+                      <Typography variant="h6">Mask app</Typography>
+                    </Box>
                   </Box>
                 </Box>
                 <Box
