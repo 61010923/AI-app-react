@@ -18,6 +18,7 @@ import animationData from '../../lotties/infinity.json'
 import linkNoMask from '../../sound/speech_20220412073706398.mp3'
 import Table from '../../components/Table'
 import AppBar from '../../components/AppBar'
+import { getAllData, setData } from '../../firebaseFunc'
 import LineBar from '../../components/LineBar'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
   const [sound, setSound] = useState(true)
   const [loading, setLoading] = useState(true)
   const [playNoMask] = useSound(linkNoMask)
+  const [rows, setRows] = useState([])
 
   const handleUserMedia = () => setTimeout(() => setLoading(false), 1000)
 
@@ -121,6 +123,7 @@ function App() {
       const casted = resized.cast('int32')
       const expanded = casted.expandDims(0)
       const obj = await net.executeAsync(expanded)
+      console.log(obj)
       // const boxes = await obj[6].array()
       // const classes = await obj[7].array()
       // const scores = await obj[5].array()
@@ -163,6 +166,11 @@ function App() {
       const scores = await obj[3].array()
       if (Number(classes[0][0]) === 2 && parseFloat(scores[0][0]) > 0.9) {
         const imageUrl = await saveImage()
+        const body = {
+          image: imageUrl,
+          date: new Date(),
+        }
+        await setData(body)
         lineNotify('No mask', imageUrl)
         if (sound) {
           playNoMask()
@@ -207,6 +215,14 @@ function App() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, sound])
+
+  const getData = async () => {
+    const data = await getAllData()
+    setRows(data)
+  }
+  useEffect(() => {
+    getData()
+  }, [])
 
   return (
     <>
@@ -297,7 +313,7 @@ function App() {
         }}
         >
           <LineBar />
-          <Table />
+          <Table rows={rows} />
         </Box>
       </CanvasBx>
 

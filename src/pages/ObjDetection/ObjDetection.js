@@ -14,10 +14,11 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { makeStyles } from '@mui/styles'
 import * as cocoSsd from '@tensorflow-models/coco-ssd'
 import * as tf from '@tensorflow/tfjs'
+import Webcam from 'react-webcam'
+import { getAllData, setData } from '../../firebaseFunc'
 // import {loadGraphModel} from '@tensorflow/tfjs-converter';
 
 // import * as posenet from '@tensorflow-models/posenet';
-import Webcam from 'react-webcam'
 import animationData from '../../lotties/infinity.json'
 // import { createWorker, createScheduler } from 'tesseract.js'
 // import * as cvstfjs from '@microsoft/customvision-tfjs';
@@ -69,10 +70,15 @@ function App() {
       console.log('failed load model')
     }
   }
+  const getData = async () => {
+    const data = await getAllData()
+    console.log(data)
+  }
 
   useEffect(() => {
     tf.ready().then(() => {
       loadModel()
+      getData()
     })
   }, [])
 
@@ -183,6 +189,9 @@ function App() {
     maxWidth: '100vw',
     facingMode: 'environment',
   }
+  const createData = async () => {
+    await setData()
+  }
 
   return (
     <Box className={classes.container}>
@@ -240,7 +249,9 @@ function App() {
           onUserMedia={handleUserMedia}
         />
       </Box>
-
+      <Button onClick={createData}>
+        click
+      </Button>
     </Box>
   )
 }
