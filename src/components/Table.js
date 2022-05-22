@@ -59,7 +59,7 @@ export default function StickyHeadTable(props) {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', margin: 0 }}>
-      <TableContainer sx={{ minHeight: '360px', height: '100%' }}>
+      <TableContainer sx={{ minHeight: '300px', height: '100%' }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -83,7 +83,7 @@ export default function StickyHeadTable(props) {
               .map((item, i) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={item.id}>
                   <TableCell align="left">
-                    <Model item={item} />
+                    <Model item={item} created={rows[i]?.created} />
                   </TableCell>
                   <TableCell align="left">{item.created}</TableCell>
                   {/* <TableCell align="">
