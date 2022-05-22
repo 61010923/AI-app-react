@@ -9,10 +9,11 @@ import PropTypes from 'prop-types'
 import Avatar from '@mui/material/Avatar'
 import SearchIcon from '@mui/icons-material/Search'
 
-function Model({ item }) {
+function Model({ item, created }) {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
   return (
     <>
       <Box
@@ -63,7 +64,7 @@ function Model({ item }) {
           >
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                2022/04/27
+                {created}
               </Typography>
               <Box
                 sx={{
@@ -105,6 +106,8 @@ function Model({ item }) {
   )
 }
 Model.propTypes = {
-  item: PropTypes.arrayOf().isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  item: PropTypes.objectOf(PropTypes.any).isRequired,
+  created: PropTypes.string.isRequired,
 }
 export default Model

@@ -192,7 +192,6 @@ function PageUI() {
     }
   }
   const handleSoundAndAlert = async (net) => {
-    console.log('test')
     // Check data is available
     if (
       typeof webcamRef.current !== 'undefined'
@@ -218,7 +217,6 @@ function PageUI() {
         }
         await setData(body)
         setCount(count + 1)
-        console.log('object')
         lineNotify('No mask', imageUrl)
         if (sound) {
           playNoMask()
@@ -261,7 +259,6 @@ function PageUI() {
 
   const getData = async () => {
     const data = await getAllData()
-    console.log('hello')
     setRows(data)
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -404,7 +401,7 @@ function PageUI() {
                 <Box mt={2}>
                   <Typography variant="body1">Line Notification</Typography>
                 </Box>
-                <Box height="300px" mt={2} mb={2}>
+                <Box height="250px" mt={2} mb={2}>
                   <img src={LineQr} alt="lineQr" height="100%" />
                 </Box>
               </Box>
