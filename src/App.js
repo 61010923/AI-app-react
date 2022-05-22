@@ -5,6 +5,7 @@ import {
 import React from 'react'
 import ObjDetection from './pages/ObjDetection'
 import TfDetection from './pages/TfDetection'
+import PageUI from './pages/PageUI'
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
     <Routes>
       <Route path="/ObjDetection" element={<ObjDetection />} />
       <Route path="/TfDetection" element={<TfDetection />} />
-      <Route path="/" />
+      <Route path="/" element={<PageUI />} />
     </Routes>
 
   )

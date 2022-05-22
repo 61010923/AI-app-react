@@ -17,7 +17,9 @@ function Model({ item }) {
     <>
       <Box
         sx={{
-          position: 'relative', width: '56px', height: '56px',
+          position: 'relative',
+          width: '56px',
+          height: '56px',
         }}
         onClick={handleOpen}
       >
@@ -25,53 +27,55 @@ function Model({ item }) {
           alt="image detection"
           src={item.image}
           sx={{
-            width: 56, height: 56, cursor: 'pointer',
+            width: 56,
+            height: 56,
+            cursor: 'pointer',
           }}
-
         />
         <Box sx={{ position: 'absolute', bottom: '-7px', right: '-7px' }}>
-          <IconButton aria-label="search" size="" sx={{ color: '#016DFF' }}>
+          <IconButton aria-label="search" size="" sx={{ color: 'f5f3f4' }}>
             <SearchIcon fontSize="inherit" />
           </IconButton>
         </Box>
       </Box>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        key={item.id}
-      >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '700px',
-          minWidth: '300px',
-          // maxHeight: '400px',
-          bgcolor: 'transparent',
-          // boxShadow: 24,
-          p: 1,
-        }}
-        >
-          <Box sx={{
-            display: 'flex', justifyContent: 'space-between', color: '#fff', mb: 1,
+      <Modal open={open} onClose={handleClose} key={item.id}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            maxWidth: '700px',
+            minWidth: '300px',
+            // maxHeight: '400px',
+            bgcolor: 'transparent',
+            // boxShadow: 24,
+            p: 1,
           }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              color: '#fff',
+              mb: 1,
+            }}
           >
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 2022/04/27
               </Typography>
-              <Box sx={{
-                backgroundColor:
-((item.status === 'wear mask' && 'green')
-|| (item.status === 'no mask' && 'orange')
-),
-                padding: '0.5rem',
-                borderRadius: '0.5rem',
-                display: 'inline-block',
-                color: '#fff',
-                fontWeight: 'bold',
-              }}
+              <Box
+                sx={{
+                  backgroundColor:
+                    (item.status === 'wear mask' && 'green')
+                    || (item.status === 'no mask' && 'orange'),
+                  padding: '0.5rem',
+                  borderRadius: '0.5rem',
+                  display: 'inline-block',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                }}
               >
                 {item.status}
               </Box>
@@ -85,13 +89,18 @@ function Model({ item }) {
               src={item.image}
               alt="imageDetection"
               sx={{
-                width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, objectFit: 'cover', borderRadius: '8px',
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                objectFit: 'cover',
+                borderRadius: '8px',
               }}
             />
           </Box>
         </Box>
       </Modal>
-
     </>
   )
 }

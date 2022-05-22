@@ -16,11 +16,16 @@ import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import CloseIcon from '@mui/icons-material/Close'
 import IconButton from '@mui/material/IconButton'
+import { makeStyles } from '@mui/styles'
+
 import Model from './Model'
 
-const style = {
+const useStyle = makeStyles((theme) => ({
+  background: {
+    backgroundColor: theme.palette.primary.main,
+  },
+}))
 
-}
 const columns = [
   { id: 'image', label: 'Image Detection', minWidth: 50 },
   { id: 'created', label: 'Created', minWidth: 100 },
@@ -45,16 +50,16 @@ export default function StickyHeadTable(props) {
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
   }
+  const classes = useStyle()
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value)
     setPage(0)
   }
 
-  console.log(rows)
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <Paper sx={{ width: '100%', overflow: 'hidden', margin: 0 }}>
+      <TableContainer sx={{ minHeight: '360px', height: '100%' }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -62,7 +67,10 @@ export default function StickyHeadTable(props) {
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{
+                    minWidth: column.minWidth,
+                    backgroundColor: '#f5f3f4',
+                  }}
                 >
                   {column.label}
                 </TableCell>
@@ -73,50 +81,39 @@ export default function StickyHeadTable(props) {
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((item, i) => (
-                <TableRow
-                  hover
-                  role="checkbox"
-                  tabIndex={-1}
-                  key={item.id}
-                >
+                <TableRow hover role="checkbox" tabIndex={-1} key={item.id}>
                   <TableCell align="left">
-
                     <Model item={item} />
-
                   </TableCell>
-                  <TableCell align="left">
-                    {item.created}
-                  </TableCell>
-                  <TableCell align="">
-                    <Box sx={{
-                      backgroundColor:
-              ((item.status === 'wear mask' && 'green')
-              || (item.status === 'no mask' && 'orange')
-              ),
-                      padding: '0.5rem',
-                      borderRadius: '0.5rem',
-                      display: 'inline-block',
-                      color: '#fff',
-                      fontWeight: 'bold',
-                      boxShadow: '0 0 5px 2px #c8c7c6',
-                    }}
+                  <TableCell align="left">{item.created}</TableCell>
+                  {/* <TableCell align="">
+                    <Box
+                      sx={{
+                        backgroundColor:
+                          (item.status === 'wear mask' && 'green')
+                          || (item.status === 'no mask' && 'orange'),
+                        padding: '0.5rem',
+                        borderRadius: '0.5rem',
+                        display: 'inline-block',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        boxShadow: '0 0 5px 2px #c8c7c6',
+                      }}
                     >
                       {item.status}
                     </Box>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             {_isEmpty(rows) && (
-            <TableCell align="center" colSpan={6}>
-              <Typography>
-                No data
-              </Typography>
-            </TableCell>
+              <TableCell align="center" colSpan={6}>
+                <Typography>No data</Typography>
+              </TableCell>
             )}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
         count={rows.length}
@@ -124,7 +121,7 @@ export default function StickyHeadTable(props) {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      /> */}
     </Paper>
   )
 }
